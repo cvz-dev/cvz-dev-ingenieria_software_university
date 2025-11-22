@@ -99,7 +99,7 @@ def consulta_estudiantes_A(request):
     if course_id:
         resultado = Takes.objects.filter(
             course_id=course_id,
-            grade="A"
+            grade="A "
         ).select_related("student")
 
     return render(request, "consultas/consulta4.html", {
