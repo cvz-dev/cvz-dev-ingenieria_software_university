@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cursos impartidos por un Profesor</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            padding: 40px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border: 1px solid #aaa;
+        }
+
+        button {
+            width: 100%;
+            background: #007bff;
+            padding: 12px;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 12px;
+            background: #555;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .back:hover {
+            background: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Consulta 5: Cursos impartidos por un Profesor</h2>
+
+    <form method="get">
+        <label>Selecciona un profesor:</label>
+
+        <select name="instructor_id" required>
+            <option value="">-- Elige un profesor --</option>
+
+            {% for p in profesores %}
+                <option value="{{ p.ID }}"
+                        {% if instructor_id == p.ID %}selected{% endif %}>
+                    {{ p.ID }} - {{ p.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Consultar</button>
+    </form>
+
+    {% if instructor_id and not profesor %}
+        <p><strong>No existe un profesor con ese ID.</strong></p>
+    {% endif %}
+
+    {% if resultado %}
+        <h3>Cursos Impartidos:</h3>
+
+        <table>
+            <tr>
+                <th>Profesor</th>
+                <th>Curso</th>
+                <th>Sección</th>
+                <th>Semestre</th>
+                <th>Año</th>
+            </tr>
+
+            {% for r in resultado %}
+            <tr>
+                <td>{{ r.instructor.ID }} - {{ r.instructor.name }}</td>
+                <td>{{ r.course_id }}</td>
+                <td>{{ r.sec_id }}</td>
+                <td>{{ r.semester }}</td>
+                <td>{{ r.year }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+    {% elif instructor_id %}
+        <p><strong>Este profesor no imparte cursos registrados.</strong></p>
+    {% endif %}
+
+    <a class="back" href="{% url 'menu_consultas' %}">← Volver al Menú</a>
+
+</div>
+
+</body>
+</html>
