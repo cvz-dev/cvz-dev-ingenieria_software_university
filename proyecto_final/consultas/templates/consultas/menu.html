@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Menú de Consultas</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: #f9f9f9;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .menu-container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+
+        .menu-item {
+            display: block;
+            width: 100%;
+            background: #007bff;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Menú de Consultas</h1>
+
+    <div class="menu-container">
+
+        <a class="menu-item" href="{% url 'consulta1' %}">
+            1. Prerrequisitos de un Curso
+        </a>
+
+        <a class="menu-item" href="{% url 'consulta2' %}">
+            2. Transcript de un Estudiante
+        </a>
+
+        <a class="menu-item" href="{% url 'consulta3' %}">
+            3. Estudiante y su Asesor
+        </a>
+
+        <a class="menu-item" href="{% url 'consulta4' %}">
+            4. Estudiantes con Calificación 'A'
+        </a>
+
+        <a class="menu-item" href="{% url 'consulta5' %}">
+            5. Cursos impartidos por un Profesor
+        </a>
+
+    </div>
+
+</body>
+</html>

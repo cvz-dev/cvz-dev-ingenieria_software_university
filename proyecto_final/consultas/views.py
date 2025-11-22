@@ -1,16 +1,11 @@
 from django.shortcuts import render
-
-# Create your views here.
-from django.http import HttpResponse
-
-from django.shortcuts import render
 from .models import (
     Course, Student, Instructor,
     Prereq, Takes, Advisor, Teaches
 )
 
 # -------------------------------------------------
-# MENÚ GENERAL DE CONSULTAS
+# MENÚ PRINCIPAL
 # -------------------------------------------------
 def menu_consultas(request):
     return render(request, "consultas/menu.html")
@@ -24,14 +19,20 @@ def consulta_prerrequisitos(request):
     resultado = []
     curso = None
 
+    # Lista de cursos para el select
+    cursos = Course.objects.all().order_by("course_id")
+
     if course_id:
         curso = Course.objects.filter(course_id=course_id).first()
-        resultado = Prereq.objects.filter(course__course_id=course_id).select_related("prereq")
+        resultado = Prereq.objects.filter(
+            course__course_id=course_id
+        ).select_related("prereq")
 
     return render(request, "consultas/consulta1.html", {
         "course_id": course_id,
         "curso": curso,
-        "resultado": resultado
+        "resultado": resultado,
+        "cursos": cursos,
     })
 
 
@@ -43,14 +44,20 @@ def consulta_transcript(request):
     resultado = []
     estudiante = None
 
+    # Lista dinámica de estudiantes
+    estudiantes = Student.objects.all().order_by("ID")
+
     if student_id:
         estudiante = Student.objects.filter(ID=student_id).first()
-        resultado = Takes.objects.filter(student__ID=student_id).select_related("student")
+        resultado = Takes.objects.filter(
+            student__ID=student_id
+        ).select_related("student")
 
     return render(request, "consultas/consulta2.html", {
         "student_id": student_id,
         "estudiante": estudiante,
-        "resultado": resultado
+        "resultado": resultado,
+        "estudiantes": estudiantes,
     })
 
 
@@ -62,14 +69,20 @@ def consulta_estudiante_asesor(request):
     resultado = []
     estudiante = None
 
+    # Select con todos los estudiantes
+    estudiantes = Student.objects.all().order_by("ID")
+
     if student_id:
         estudiante = Student.objects.filter(ID=student_id).first()
-        resultado = Advisor.objects.filter(student__ID=student_id).select_related("student", "instructor")
+        resultado = Advisor.objects.filter(
+            student__ID=student_id
+        ).select_related("student", "instructor")
 
     return render(request, "consultas/consulta3.html", {
         "student_id": student_id,
         "estudiante": estudiante,
-        "resultado": resultado
+        "resultado": resultado,
+        "estudiantes": estudiantes,
     })
 
 
@@ -80,12 +93,19 @@ def consulta_estudiantes_A(request):
     course_id = request.GET.get("course_id")
     resultado = []
 
+    # Todos los cursos para el menú
+    cursos = Course.objects.all().order_by("course_id")
+
     if course_id:
-        resultado = Takes.objects.filter(course_id=course_id, grade="A").select_related("student")
+        resultado = Takes.objects.filter(
+            course_id=course_id,
+            grade="A"
+        ).select_related("student")
 
     return render(request, "consultas/consulta4.html", {
         "course_id": course_id,
-        "resultado": resultado
+        "resultado": resultado,
+        "cursos": cursos,
     })
 
 
@@ -97,12 +117,18 @@ def consulta_cursos_profesor(request):
     resultado = []
     profesor = None
 
+    # Lista de instructores para el select
+    profesores = Instructor.objects.all().order_by("ID")
+
     if instructor_id:
         profesor = Instructor.objects.filter(ID=instructor_id).first()
-        resultado = Teaches.objects.filter(instructor__ID=instructor_id).select_related("instructor")
+        resultado = Teaches.objects.filter(
+            instructor__ID=instructor_id
+        ).select_related("instructor")
 
     return render(request, "consultas/consulta5.html", {
         "instructor_id": instructor_id,
         "profesor": profesor,
-        "resultado": resultado
+        "resultado": resultado,
+        "profesores": profesores,
     })

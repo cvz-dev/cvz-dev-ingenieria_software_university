@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Prerrequisitos de un Curso</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            padding: 40px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+        }
+        label {
+            font-weight: bold;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border: 1px solid #aaa;
+        }
+        button {
+            width: 100%;
+            background: #007bff;
+            padding: 12px;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #007bff;
+            color: white;
+            text-align: left;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 12px;
+            background: #555;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .back:hover {
+            background: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Consulta 1: Prerrequisitos de un Curso</h2>
+
+    <form method="get">
+        <label for="course_id">Selecciona un curso:</label>
+
+        <select name="course_id" required>
+            <option value="">-- Elige un curso --</option>
+
+            {% for c in cursos %}
+                <option value="{{ c.course_id }}"
+                    {% if course_id == c.course_id %}selected{% endif %}>
+                    {{ c.course_id }} - {{ c.title }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Consultar</button>
+    </form>
+
+    {% if course_id and not curso %}
+        <p><strong>No existe un curso con ese ID.</strong></p>
+    {% endif %}
+
+    {% if resultado %}
+        <h3>Prerrequisitos encontrados:</h3>
+        <table>
+            <tr>
+                <th>ID Prerrequisito</th>
+                <th>Título</th>
+            </tr>
+
+            {% for r in resultado %}
+            <tr>
+                <td>{{ r.prereq.course_id }}</td>
+                <td>{{ r.prereq.title }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% elif course_id %}
+        <p><strong>Este curso no tiene prerrequisitos registrados.</strong></p>
+    {% endif %}
+
+    <a class="back" href="{% url 'menu_consultas' %}">← Volver al Menú</a>
+
+</div>
+
+</body>
+</html>
