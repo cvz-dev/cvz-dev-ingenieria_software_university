@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estudiante y su Asesor</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            padding: 40px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border: 1px solid #aaa;
+        }
+
+        button {
+            width: 100%;
+            background: #007bff;
+            padding: 12px;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 12px;
+            background: #555;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .back:hover {
+            background: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Consulta 3: Estudiante y su Asesor</h2>
+
+    <form method="get">
+        <label>Selecciona un estudiante:</label>
+
+        <select name="student_id" required>
+            <option value="">-- Elige un estudiante --</option>
+
+            {% for s in estudiantes %}
+                <option value="{{ s.ID }}"
+                        {% if student_id == s.ID %}selected{% endif %}>
+                    {{ s.ID }} - {{ s.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Consultar</button>
+    </form>
+
+    {% if student_id and not estudiante %}
+        <p><strong>No existe un estudiante con ese ID.</strong></p>
+    {% endif %}
+
+    {% if resultado %}
+        <h3>Información del Asesor:</h3>
+
+        <table>
+            <tr>
+                <th>Estudiante</th>
+                <th>Asesor</th>
+                <th>Departamento</th>
+            </tr>
+
+            {% for r in resultado %}
+            <tr>
+                <td>{{ r.student.ID }} - {{ r.student.name }}</td>
+                <td>{{ r.instructor.ID }} - {{ r.instructor.name }}</td>
+                <td>{{ r.instructor.dept_name.dept_name }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+    {% elif student_id %}
+        <p><strong>Este estudiante no tiene asesor registrado.</strong></p>
+    {% endif %}
+
+    <a class="back" href="{% url 'menu_consultas' %}">← Volver al Menú</a>
+
+</div>
+
+</body>
+</html>
