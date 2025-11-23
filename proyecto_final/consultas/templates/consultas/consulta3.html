@@ -2,137 +2,93 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Estudiante y su Asesor</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f2f2f2;
-            padding: 40px;
-        }
-
-        h2 {
-            text-align: center;
-            color: #333;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: auto;
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        }
-
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 8px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border: 1px solid #aaa;
-        }
-
-        button {
-            width: 100%;
-            background: #007bff;
-            padding: 12px;
-            border: none;
-            color: white;
-            border-radius: 6px;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background: #0056b3;
-        }
-
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background: #007bff;
-            color: white;
-        }
-
-        .back {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 8px 12px;
-            background: #555;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        .back:hover {
-            background: #333;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Asesor del Estudiante</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 </head>
+<body class="bg-light">
 
-<body>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white py-2">
+                    <h5 class="mb-0 text-center"><i class="bi bi-people-fill"></i> Consulta de Asesor</h5>
+                </div>
+                
+                <div class="card-body p-3">
+                    <form method="get" class="row g-2 align-items-end mb-3">
+                        <div class="col-sm-9">
+                            <label for="student_id" class="form-label small fw-bold text-secondary mb-1">Selecciona un estudiante:</label>
+                            <select name="student_id" id="student_id" class="form-select form-select-sm" required>
+                                <option value="">-- Elige un estudiante --</option>
+                                {% for s in estudiantes %}
+                                    <option value="{{ s.ID }}" {% if student_id == s.ID %}selected{% endif %}>
+                                        {{ s.ID }} - {{ s.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="submit" class="btn btn-primary btn-sm w-100">
+                                <i class="bi bi-search"></i> Consultar
+                            </button>
+                        </div>
+                    </form>
 
-<div class="container">
+                    {% if student_id and not estudiante %}
+                        <div class="alert alert-danger py-2 small text-center" role="alert">
+                            <i class="bi bi-exclamation-circle"></i> Estudiante no encontrado.
+                        </div>
+                    {% endif %}
 
-    <h2>Consulta 3: Estudiante y su Asesor</h2>
+                    {% if resultado %}
+                        <div class="card bg-light border-0 mb-0">
+                            <div class="card-body py-3">
+                                <h6 class="card-subtitle mb-3 text-muted small text-center text-uppercase border-bottom pb-2">Relación Asignada</h6>
+                                
+                                <div class="d-flex justify-content-between align-items-center px-2">
+                                    <div class="text-center" style="width: 40%;">
+                                        <i class="bi bi-person-circle h2 text-secondary mb-1"></i>
+                                        <p class="mb-0 small fw-bold text-truncate">{{ resultado.student.name }}</p>
+                                        <p class="mb-0 small text-muted" style="font-size: 0.75rem;">Estudiante ({{ resultado.student.ID }})</p>
+                                        <span class="badge bg-light text-dark border mt-1">{{ resultado.student.dept_name.dept_name }}</span>
+                                    </div>
 
-    <form method="get">
-        <label>Selecciona un estudiante:</label>
+                                    <div class="text-muted">
+                                        <i class="bi bi-arrow-right display-6"></i>
+                                    </div>
 
-        <select name="student_id" required>
-            <option value="">-- Elige un estudiante --</option>
+                                    <div class="text-center" style="width: 40%;">
+                                        <i class="bi bi-person-badge h2 text-primary mb-1"></i>
+                                        <p class="mb-0 small fw-bold text-truncate">{{ resultado.instructor.name }}</p>
+                                        <p class="mb-0 small text-muted" style="font-size: 0.75rem;">Asesor ({{ resultado.instructor.ID }})</p>
+                                        <span class="badge bg-primary scale-75 mt-1">{{ resultado.instructor.dept_name.dept_name }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-            {% for s in estudiantes %}
-                <option value="{{ s.ID }}"
-                        {% if student_id == s.ID %}selected{% endif %}>
-                    {{ s.ID }} - {{ s.name }}
-                </option>
-            {% endfor %}
-        </select>
+                    {% elif student_id and estudiante %}
+                        <div class="alert alert-warning py-2 small text-center mb-0" role="alert">
+                            <i class="bi bi-info-circle"></i> El estudiante <strong>{{ estudiante.name }}</strong> no tiene un asesor asignado actualmente.
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-footer bg-white text-center py-2 border-0">
+                    <a href="{% url 'menu_consultas' %}" class="text-decoration-none small text-secondary">
+                        <i class="bi bi-arrow-left"></i> Volver al Menú
+                    </a>
+                </div>
+            </div>
 
-        <button type="submit">Consultar</button>
-    </form>
-
-    {% if student_id and not estudiante %}
-        <p><strong>No existe un estudiante con ese ID.</strong></p>
-    {% endif %}
-
-    {% if resultado %}
-        <h3>Información del Asesor:</h3>
-
-        <table>
-            <tr>
-                <th>Estudiante</th>
-                <th>Asesor</th>
-                <th>Departamento</th>
-            </tr>
-
-            {% for r in resultado %}
-            <tr>
-                <td>{{ r.student.ID }} - {{ r.student.name }}</td>
-                <td>{{ r.instructor.ID }} - {{ r.instructor.name }}</td>
-                <td>{{ r.instructor.dept_name.dept_name }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-
-    {% elif student_id %}
-        <p><strong>Este estudiante no tiene asesor registrado.</strong></p>
-    {% endif %}
-
-    <a class="back" href="{% url 'menu_consultas' %}">← Volver al Menú</a>
-
+        </div>
+    </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

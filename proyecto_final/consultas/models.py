@@ -27,7 +27,8 @@ class Course(models.Model):
         to_field="dept_name",
         db_column="dept_name",
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        blank=True
     )
     credits = models.IntegerField()
 
@@ -49,7 +50,8 @@ class Instructor(models.Model):
         to_field="dept_name",
         db_column="dept_name",
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        blank=True
     )
     salary = models.DecimalField(max_digits=8, decimal_places=2)
 
@@ -71,7 +73,8 @@ class Student(models.Model):
         to_field="dept_name",
         db_column="dept_name",
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        blank=True
     )
     tot_cred = models.IntegerField()
 
@@ -83,13 +86,13 @@ class Student(models.Model):
 
 
 # -------------------------------------------------
-# CLASSROOM (sin FK en Section)
+# CLASSROOM (CORREGIDO: ahora Section tiene FK a esta tabla)
 # -------------------------------------------------
 class Classroom(models.Model):
     id = models.AutoField(primary_key=True)
     building = models.CharField(max_length=15)
     room_number = models.CharField(max_length=7)
-    capacity = models.IntegerField()
+    capacity = models.IntegerField(null=True, blank=True)
 
     class Meta:
         db_table = "classroom"
@@ -100,11 +103,11 @@ class Classroom(models.Model):
 
 
 # -------------------------------------------------
-# TIME SLOT (sin FK directo en Section)
+# TIME SLOT (sin cambios, pero ahora no se usa directamente)
 # -------------------------------------------------
 class TimeSlot(models.Model):
     id = models.AutoField(primary_key=True)
-    time_slot_id = models.CharField(max_length=4)  # A/B/C etc.
+    time_slot_id = models.CharField(max_length=4)
     day = models.CharField(max_length=1)
     start_hr = models.IntegerField()
     start_min = models.IntegerField()
@@ -120,7 +123,7 @@ class TimeSlot(models.Model):
 
 
 # -------------------------------------------------
-# SECTION (solo FK a Course)
+# SECTION (CORREGIDO: ahora con FK a Classroom)
 # -------------------------------------------------
 class Section(models.Model):
     id = models.AutoField(primary_key=True)
@@ -133,11 +136,18 @@ class Section(models.Model):
     sec_id = models.CharField(max_length=8)
     semester = models.CharField(max_length=6)
     year = models.IntegerField()
-
-    # Campos heredados sin FK
-    building = models.CharField(max_length=15)
-    room_number = models.CharField(max_length=7)
-    time_slot_id = models.CharField(max_length=4)
+    
+    # CAMBIO IMPORTANTE: ahora es FK a Classroom
+    classroom = models.ForeignKey(
+        Classroom,
+        db_column="classroom_id",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    
+    # Este campo se mantiene como CharField (sin FK)
+    time_slot_id = models.CharField(max_length=4, null=True, blank=True)
 
     class Meta:
         db_table = "section"
@@ -148,7 +158,7 @@ class Section(models.Model):
 
 
 # -------------------------------------------------
-# TEACHES (FK a Instructor y Section)
+# TEACHES (CORREGIDO: ahora con FK a Section)
 # -------------------------------------------------
 class Teaches(models.Model):
     id = models.AutoField(primary_key=True)
@@ -158,20 +168,23 @@ class Teaches(models.Model):
         db_column="instructor_id",
         on_delete=models.CASCADE
     )
-    course_id = models.CharField(max_length=8)
-    sec_id = models.CharField(max_length=8)
-    semester = models.CharField(max_length=6)
-    year = models.IntegerField()
+    # CAMBIO IMPORTANTE: ahora es FK a Section
+    section = models.ForeignKey(
+        Section,
+        db_column="section_id",
+        on_delete=models.CASCADE
+    )
 
     class Meta:
         db_table = "teaches"
+        unique_together = ("instructor", "section")
 
     def __str__(self):
-        return f"{self.instructor} teaches {self.course_id}"
+        return f"{self.instructor} teaches {self.section}"
 
 
 # -------------------------------------------------
-# TAKES (FK a Student)
+# TAKES (CORREGIDO: ahora con FK a Section)
 # -------------------------------------------------
 class Takes(models.Model):
     id = models.AutoField(primary_key=True)
@@ -181,25 +194,28 @@ class Takes(models.Model):
         db_column="student_id",
         on_delete=models.CASCADE
     )
-    course_id = models.CharField(max_length=8)
-    sec_id = models.CharField(max_length=8)
-    semester = models.CharField(max_length=6)
-    year = models.IntegerField()
-    grade = models.CharField(max_length=2, null=True)
+    # CAMBIO IMPORTANTE: ahora es FK a Section
+    section = models.ForeignKey(
+        Section,
+        db_column="section_id",
+        on_delete=models.CASCADE
+    )
+    grade = models.CharField(max_length=2, null=True, blank=True)
 
     class Meta:
         db_table = "takes"
+        unique_together = ("student", "section")
 
     def __str__(self):
-        return f"{self.student} - {self.course_id}"
+        return f"{self.student} - {self.section}"
 
 
 # -------------------------------------------------
-# ADVISOR
+# ADVISOR (CORREGIDO: unique solo en student)
 # -------------------------------------------------
 class Advisor(models.Model):
     id = models.AutoField(primary_key=True)
-    student = models.ForeignKey(
+    student = models.OneToOneField(  # CAMBIO: OneToOne en vez de ForeignKey
         Student,
         to_field="ID",
         db_column="s_ID",
@@ -210,19 +226,20 @@ class Advisor(models.Model):
         to_field="ID",
         db_column="i_ID",
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        blank=True
     )
 
     class Meta:
         db_table = "advisor"
-        unique_together = ("student", "instructor")
+        # No necesita unique_together porque student es OneToOne
 
     def __str__(self):
         return f"{self.student} advised by {self.instructor}"
 
 
 # -------------------------------------------------
-# PREREQ
+# PREREQ (sin cambios significativos)
 # -------------------------------------------------
 class Prereq(models.Model):
     id = models.AutoField(primary_key=True)
@@ -230,13 +247,14 @@ class Prereq(models.Model):
         Course,
         to_field="course_id",
         db_column="course_id",
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="prereq_for"
     )
     prereq = models.ForeignKey(
         Course,
         to_field="course_id",
         db_column="prereq_id",
-        related_name="prerequisites",
+        related_name="is_prereq_of",
         on_delete=models.CASCADE
     )
 

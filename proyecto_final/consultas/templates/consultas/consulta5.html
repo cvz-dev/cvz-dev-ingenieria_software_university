@@ -2,141 +2,98 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Cursos impartidos por un Profesor</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f2f2f2;
-            padding: 40px;
-        }
-
-        h2 {
-            text-align: center;
-            color: #333;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: auto;
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.15);
-        }
-
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 8px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border: 1px solid #aaa;
-        }
-
-        button {
-            width: 100%;
-            background: #007bff;
-            padding: 12px;
-            border: none;
-            color: white;
-            border-radius: 6px;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background: #0056b3;
-        }
-
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background: #007bff;
-            color: white;
-        }
-
-        .back {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 8px 12px;
-            background: #555;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        .back:hover {
-            background: #333;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cursos por Profesor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 </head>
+<body class="bg-light">
 
-<body>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-9">
+            
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white py-2">
+                    <h5 class="mb-0 text-center"><i class="bi bi-easel"></i> Carga Académica</h5>
+                </div>
+                
+                <div class="card-body p-3">
+                    <form method="get" class="row g-2 align-items-end mb-3">
+                        <div class="col-sm-9">
+                            <label class="form-label small fw-bold text-secondary mb-1">Selecciona un profesor:</label>
+                            <select name="instructor_id" class="form-select form-select-sm" required>
+                                <option value="">-- Elige un instructor --</option>
+                                {% for p in profesores %}
+                                    <option value="{{ p.ID }}" {% if instructor_id == p.ID %}selected{% endif %}>
+                                        {{ p.name }} ({{ p.dept_name.dept_name }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="submit" class="btn btn-primary btn-sm w-100">Ver Cursos</button>
+                        </div>
+                    </form>
 
-<div class="container">
+                    {% if instructor_id and not profesor %}
+                        <div class="alert alert-danger py-2 small">Profesor no encontrado.</div>
+                    {% endif %}
 
-    <h2>Consulta 5: Cursos impartidos por un Profesor</h2>
+                    {% if resultado %}
+                        <div class="alert alert-success py-1 small mb-2">
+                            <strong>Profesor:</strong> {{ profesor.name }}
+                        </div>
 
-    <form method="get">
-        <label>Selecciona un profesor:</label>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped table-hover border small mb-0 align-middle">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>ID Curso</th>
+                                        <th>Título</th>
+                                        <th>Sec</th>
+                                        <th>Semestre</th>
+                                        <th>Año</th>
+                                        <th>Salón</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for r in resultado %}
+                                    <tr>
+                                        <td class="fw-bold">{{ r.section.course.course_id }}</td>
+                                        <td>{{ r.section.course.title }}</td>
+                                        <td>{{ r.section.sec_id }}</td>
+                                        <td>{{ r.section.semester }}</td>
+                                        <td>{{ r.section.year }}</td>
+                                        <td>
+                                            {% if r.section.classroom %}
+                                                <span class="badge bg-secondary text-white">
+                                                    {{ r.section.classroom.building }} {{ r.section.classroom.room_number }}
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted fst-italic">Virtual / Sin aula</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% elif instructor_id and profesor %}
+                        <div class="alert alert-info py-2 small text-center mb-0">
+                            Este profesor no tiene cursos asignados.
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-footer bg-white text-center py-2 border-0">
+                    <a href="{% url 'menu_consultas' %}" class="text-decoration-none small text-secondary">Volver al Menú</a>
+                </div>
+            </div>
 
-        <select name="instructor_id" required>
-            <option value="">-- Elige un profesor --</option>
-
-            {% for p in profesores %}
-                <option value="{{ p.ID }}"
-                        {% if instructor_id == p.ID %}selected{% endif %}>
-                    {{ p.ID }} - {{ p.name }}
-                </option>
-            {% endfor %}
-        </select>
-
-        <button type="submit">Consultar</button>
-    </form>
-
-    {% if instructor_id and not profesor %}
-        <p><strong>No existe un profesor con ese ID.</strong></p>
-    {% endif %}
-
-    {% if resultado %}
-        <h3>Cursos Impartidos:</h3>
-
-        <table>
-            <tr>
-                <th>Profesor</th>
-                <th>Curso</th>
-                <th>Sección</th>
-                <th>Semestre</th>
-                <th>Año</th>
-            </tr>
-
-            {% for r in resultado %}
-            <tr>
-                <td>{{ r.instructor.ID }} - {{ r.instructor.name }}</td>
-                <td>{{ r.course_id }}</td>
-                <td>{{ r.sec_id }}</td>
-                <td>{{ r.semester }}</td>
-                <td>{{ r.year }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-
-    {% elif instructor_id %}
-        <p><strong>Este profesor no imparte cursos registrados.</strong></p>
-    {% endif %}
-
-    <a class="back" href="{% url 'menu_consultas' %}">← Volver al Menú</a>
-
+        </div>
+    </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

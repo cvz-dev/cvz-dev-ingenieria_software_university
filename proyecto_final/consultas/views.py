@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import (
     Course, Student, Instructor,
-    Prereq, Takes, Advisor, Teaches
+    Prereq, Takes, Advisor, Teaches,
 )
 
 # -------------------------------------------------
@@ -24,9 +24,10 @@ def consulta_prerrequisitos(request):
 
     if course_id:
         curso = Course.objects.filter(course_id=course_id).first()
+        # Sin cambios - ya funciona correctamente
         resultado = Prereq.objects.filter(
             course__course_id=course_id
-        ).select_related("prereq")
+        ).select_related("prereq", "course")
 
     return render(request, "consultas/consulta1.html", {
         "course_id": course_id,
@@ -49,9 +50,17 @@ def consulta_transcript(request):
 
     if student_id:
         estudiante = Student.objects.filter(ID=student_id).first()
+        # CAMBIO: ahora usa section__course para acceder al curso
         resultado = Takes.objects.filter(
             student__ID=student_id
-        ).select_related("student")
+        ).select_related(
+            "student",
+            "section",
+            "section__course"
+        ).order_by(
+            "section__year",
+            "section__semester"
+        )
 
     return render(request, "consultas/consulta2.html", {
         "student_id": student_id,
@@ -66,7 +75,7 @@ def consulta_transcript(request):
 # -------------------------------------------------
 def consulta_estudiante_asesor(request):
     student_id = request.GET.get("student_id")
-    resultado = []
+    resultado = None
     estudiante = None
 
     # Select con todos los estudiantes
@@ -74,9 +83,14 @@ def consulta_estudiante_asesor(request):
 
     if student_id:
         estudiante = Student.objects.filter(ID=student_id).first()
-        resultado = Advisor.objects.filter(
-            student__ID=student_id
-        ).select_related("student", "instructor")
+        # CAMBIO: ahora Advisor es OneToOne, así que usamos .first() o try/except
+        try:
+            resultado = Advisor.objects.select_related(
+                "student",
+                "instructor"
+            ).get(student__ID=student_id)
+        except Advisor.DoesNotExist:
+            resultado = None
 
     return render(request, "consultas/consulta3.html", {
         "student_id": student_id,
@@ -97,10 +111,15 @@ def consulta_estudiantes_A(request):
     cursos = Course.objects.all().order_by("course_id")
 
     if course_id:
+        # CAMBIO: ahora filtramos por section__course__course_id
         resultado = Takes.objects.filter(
-            course_id=course_id,
-            grade="A "
-        ).select_related("student")
+            section__course__course_id=course_id,
+            grade = "A "
+        ).select_related(
+            "student",
+            "section",
+            "section__course"
+        ).order_by("student__name")
 
     return render(request, "consultas/consulta4.html", {
         "course_id": course_id,
@@ -122,9 +141,17 @@ def consulta_cursos_profesor(request):
 
     if instructor_id:
         profesor = Instructor.objects.filter(ID=instructor_id).first()
+        # CAMBIO: ahora accedemos al curso a través de section
         resultado = Teaches.objects.filter(
             instructor__ID=instructor_id
-        ).select_related("instructor")
+        ).select_related(
+            "instructor",
+            "section",
+            "section__course"
+        ).order_by(
+            "section__year",
+            "section__semester"
+        )
 
     return render(request, "consultas/consulta5.html", {
         "instructor_id": instructor_id,

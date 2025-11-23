@@ -2,77 +2,47 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Menú de Consultas</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 40px;
-            background: #f9f9f9;
-        }
-
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .menu-container {
-            max-width: 500px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
-        }
-
-        .menu-item {
-            display: block;
-            width: 100%;
-            background: #007bff;
-            color: white;
-            text-align: center;
-            padding: 12px;
-            border-radius: 6px;
-            margin: 10px 0;
-            text-decoration: none;
-            font-size: 16px;
-            transition: 0.2s;
-        }
-
-        .menu-item:hover {
-            background: #0056b3;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+<body class="bg-light">
 
-<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-primary text-white text-center py-3">
+                        <h2 class="h4 mb-0">Menú de Consultas</h2>
+                    </div>
+                    
+                    <div class="list-group list-group-flush p-3">
+                        <a href="{% url 'consulta1' %}" class="list-group-item list-group-item-action rounded mb-2 border">
+                            <i class="bi bi-arrow-right-circle"></i> 1. Prerrequisitos de un Curso
+                        </a>
 
-    <h1>Menú de Consultas</h1>
+                        <a href="{% url 'consulta2' %}" class="list-group-item list-group-item-action rounded mb-2 border">
+                            <i class="bi bi-person-lines-fill"></i> 2. Transcript de un Estudiante
+                        </a>
+                        
+                        <a href="{% url 'consulta3' %}" class="list-group-item list-group-item-action rounded mb-2 border">
+                            <i class="bi bi-person-lines-fill"></i> 3. Estudiante y asesor
+                        </a>
 
-    <div class="menu-container">
+                        <a href="{% url 'consulta4' %}" class="list-group-item list-group-item-action rounded mb-2 border">
+                            <i class="bi bi-journal-check"></i> 4. Estudiantes con nota 'A'
+                        </a>
 
-        <a class="menu-item" href="{% url 'consulta1' %}">
-            1. Prerrequisitos de un Curso
-        </a>
-
-        <a class="menu-item" href="{% url 'consulta2' %}">
-            2. Transcript de un Estudiante
-        </a>
-
-        <a class="menu-item" href="{% url 'consulta3' %}">
-            3. Estudiante y su Asesor
-        </a>
-
-        <a class="menu-item" href="{% url 'consulta4' %}">
-            4. Estudiantes con Calificación 'A'
-        </a>
-
-        <a class="menu-item" href="{% url 'consulta5' %}">
-            5. Cursos impartidos por un Profesor
-        </a>
-
+                         <a href="{% url 'consulta5' %}" class="list-group-item list-group-item-action rounded mb-2 border">
+                            <i class="bi bi-person-video3"></i> 5. Cursos de un Profesor
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
