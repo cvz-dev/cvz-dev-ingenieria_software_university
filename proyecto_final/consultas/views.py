@@ -24,7 +24,6 @@ def consulta_prerrequisitos(request):
 
     if course_id:
         curso = Course.objects.filter(course_id=course_id).first()
-        # Sin cambios - ya funciona correctamente
         resultado = Prereq.objects.filter(
             course__course_id=course_id
         ).select_related("prereq", "course")
