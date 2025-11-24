@@ -86,7 +86,7 @@ class Student(models.Model):
 
 
 # -------------------------------------------------
-# CLASSROOM (CORREGIDO: ahora Section tiene FK a esta tabla)
+# CLASSROOM
 # -------------------------------------------------
 class Classroom(models.Model):
     id = models.AutoField(primary_key=True)
@@ -103,7 +103,7 @@ class Classroom(models.Model):
 
 
 # -------------------------------------------------
-# TIME SLOT (sin cambios, pero ahora no se usa directamente)
+# TIME SLOT
 # -------------------------------------------------
 class TimeSlot(models.Model):
     id = models.AutoField(primary_key=True)
@@ -123,21 +123,22 @@ class TimeSlot(models.Model):
 
 
 # -------------------------------------------------
-# SECTION (CORREGIDO: ahora con FK a Classroom)
+# SECTION
 # -------------------------------------------------
 class Section(models.Model):
     id = models.AutoField(primary_key=True)
+    sec_id = models.CharField(max_length=8)
+    semester = models.CharField(max_length=6)
+    year = models.IntegerField()
+    time_slot_id = models.CharField(max_length=4, null=True, blank=True)
+
     course = models.ForeignKey(
         Course,
         to_field="course_id",
         db_column="course_id",
         on_delete=models.CASCADE
     )
-    sec_id = models.CharField(max_length=8)
-    semester = models.CharField(max_length=6)
-    year = models.IntegerField()
-    
-    # CAMBIO IMPORTANTE: ahora es FK a Classroom
+
     classroom = models.ForeignKey(
         Classroom,
         db_column="classroom_id",
@@ -145,9 +146,6 @@ class Section(models.Model):
         null=True,
         blank=True
     )
-    
-    # Este campo se mantiene como CharField (sin FK)
-    time_slot_id = models.CharField(max_length=4, null=True, blank=True)
 
     class Meta:
         db_table = "section"
@@ -158,7 +156,7 @@ class Section(models.Model):
 
 
 # -------------------------------------------------
-# TEACHES (CORREGIDO: ahora con FK a Section)
+# TEACHES
 # -------------------------------------------------
 class Teaches(models.Model):
     id = models.AutoField(primary_key=True)
@@ -168,7 +166,6 @@ class Teaches(models.Model):
         db_column="instructor_id",
         on_delete=models.CASCADE
     )
-    # CAMBIO IMPORTANTE: ahora es FK a Section
     section = models.ForeignKey(
         Section,
         db_column="section_id",
@@ -194,7 +191,7 @@ class Takes(models.Model):
         db_column="student_id",
         on_delete=models.CASCADE
     )
-    # CAMBIO IMPORTANTE: ahora es FK a Section
+
     section = models.ForeignKey(
         Section,
         db_column="section_id",
@@ -211,11 +208,11 @@ class Takes(models.Model):
 
 
 # -------------------------------------------------
-# ADVISOR (CORREGIDO: unique solo en student)
+# ADVISOR
 # -------------------------------------------------
 class Advisor(models.Model):
     id = models.AutoField(primary_key=True)
-    student = models.OneToOneField(  # CAMBIO: OneToOne en vez de ForeignKey
+    student = models.OneToOneField(
         Student,
         to_field="ID",
         db_column="s_ID",
@@ -232,14 +229,13 @@ class Advisor(models.Model):
 
     class Meta:
         db_table = "advisor"
-        # No necesita unique_together porque student es OneToOne
 
     def __str__(self):
         return f"{self.student} advised by {self.instructor}"
 
 
 # -------------------------------------------------
-# PREREQ (sin cambios significativos)
+# PREREQ
 # -------------------------------------------------
 class Prereq(models.Model):
     id = models.AutoField(primary_key=True)
