@@ -22,6 +22,7 @@ class Department(models.Model):
 class Course(models.Model):
     course_id = models.CharField(max_length=8, primary_key=True)
     title = models.CharField(max_length=50)
+    credits = models.IntegerField()
     dept_name = models.ForeignKey(
         Department,
         to_field="dept_name",
@@ -30,7 +31,6 @@ class Course(models.Model):
         null=True,
         blank=True
     )
-    credits = models.IntegerField()
 
     class Meta:
         db_table = "course"
@@ -45,6 +45,7 @@ class Course(models.Model):
 class Instructor(models.Model):
     ID = models.CharField(max_length=5, primary_key=True)
     name = models.CharField(max_length=20)
+    salary = models.DecimalField(max_digits=8, decimal_places=2)
     dept_name = models.ForeignKey(
         Department,
         to_field="dept_name",
@@ -53,7 +54,6 @@ class Instructor(models.Model):
         null=True,
         blank=True
     )
-    salary = models.DecimalField(max_digits=8, decimal_places=2)
 
     class Meta:
         db_table = "instructor"
@@ -68,6 +68,7 @@ class Instructor(models.Model):
 class Student(models.Model):
     ID = models.CharField(max_length=5, primary_key=True)
     name = models.CharField(max_length=20)
+    tot_cred = models.IntegerField()
     dept_name = models.ForeignKey(
         Department,
         to_field="dept_name",
@@ -76,7 +77,6 @@ class Student(models.Model):
         null=True,
         blank=True
     )
-    tot_cred = models.IntegerField()
 
     class Meta:
         db_table = "student"
@@ -181,23 +181,22 @@ class Teaches(models.Model):
 
 
 # -------------------------------------------------
-# TAKES (CORREGIDO: ahora con FK a Section)
+# TAKES
 # -------------------------------------------------
 class Takes(models.Model):
     id = models.AutoField(primary_key=True)
+    grade = models.CharField(max_length=2, null=True, blank=True)
     student = models.ForeignKey(
         Student,
         to_field="ID",
         db_column="student_id",
         on_delete=models.CASCADE
     )
-
     section = models.ForeignKey(
         Section,
         db_column="section_id",
         on_delete=models.CASCADE
     )
-    grade = models.CharField(max_length=2, null=True, blank=True)
 
     class Meta:
         db_table = "takes"
