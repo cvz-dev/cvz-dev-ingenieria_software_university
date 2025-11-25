@@ -49,7 +49,6 @@ def consulta_transcript(request):
 
     if student_id:
         estudiante = Student.objects.filter(ID=student_id).first()
-        # CAMBIO: ahora usa section__course para acceder al curso
         resultado = Takes.objects.filter(
             student__ID=student_id
         ).select_related(
@@ -82,14 +81,8 @@ def consulta_estudiante_asesor(request):
 
     if student_id:
         estudiante = Student.objects.filter(ID=student_id).first()
-        # CAMBIO: ahora Advisor es OneToOne, así que usamos .first() o try/except
-        try:
-            resultado = Advisor.objects.select_related(
-                "student",
-                "instructor"
-            ).get(student__ID=student_id)
-        except Advisor.DoesNotExist:
-            resultado = None
+        
+        resultado = Advisor.objects.filter(student__ID=student_id).select_related("student", "instructor").first() 
 
     return render(request, "consultas/consulta3.html", {
         "student_id": student_id,
