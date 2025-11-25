@@ -4,16 +4,13 @@ from .models import (
     Prereq, Takes, Advisor, Teaches,
 )
 
-# -------------------------------------------------
+
 # MENÚ PRINCIPAL
-# -------------------------------------------------
 def menu_consultas(request):
     return render(request, "consultas/menu.html")
 
 
-# -------------------------------------------------
 # CONSULTA 1: Prerrequisitos de un curso
-# -------------------------------------------------
 def consulta_prerrequisitos(request):
     course_id = request.GET.get("course_id")
     resultado = []
@@ -36,9 +33,7 @@ def consulta_prerrequisitos(request):
     })
 
 
-# -------------------------------------------------
 # CONSULTA 2: Transcript de un estudiante
-# -------------------------------------------------
 def consulta_transcript(request):
     student_id = request.GET.get("student_id")
     resultado = []
@@ -82,7 +77,12 @@ def consulta_estudiante_asesor(request):
     if student_id:
         estudiante = Student.objects.filter(ID=student_id).first()
         
-        resultado = Advisor.objects.filter(student__ID=student_id).select_related("student", "instructor").first() 
+        resultado = Advisor.objects.filter(
+            student__ID=student_id
+        ).select_related(
+            "student", 
+            "instructor"
+        ).first() 
 
     return render(request, "consultas/consulta3.html", {
         "student_id": student_id,
@@ -103,7 +103,6 @@ def consulta_estudiantes_A(request):
     cursos = Course.objects.all().order_by("course_id")
 
     if course_id:
-        # CAMBIO: ahora filtramos por section__course__course_id
         resultado = Takes.objects.filter(
             section__course__course_id=course_id,
             grade = "A "
@@ -133,7 +132,6 @@ def consulta_cursos_profesor(request):
 
     if instructor_id:
         profesor = Instructor.objects.filter(ID=instructor_id).first()
-        # CAMBIO: ahora accedemos al curso a través de section
         resultado = Teaches.objects.filter(
             instructor__ID=instructor_id
         ).select_related(
