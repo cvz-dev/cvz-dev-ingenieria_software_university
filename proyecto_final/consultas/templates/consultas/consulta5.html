@@ -3,94 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cursos por Profesor</title>
+    <title>Cursos Profesor</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root { --mi-naranja: #fd7e14; --mi-naranja-dark: #d66305; }
+        .bg-primary { background-color: var(--mi-naranja) !important; }
+        .text-primary { color: var(--mi-naranja) !important; }
+        .btn-primary { background-color: var(--mi-naranja) !important; border-color: var(--mi-naranja) !important; }
+        .btn-primary:hover, .btn-primary:focus, .btn-primary:active { background-color: var(--mi-naranja-dark) !important; border-color: var(--mi-naranja-dark) !important; }
+        .btn-home-nav:hover { background-color: rgba(255,255,255,0.2); border-radius: 5px; }
+        .badge.bg-primary { background-color: var(--mi-naranja) !important; }
+    </style>
 </head>
 <body class="bg-light">
-
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-10 col-lg-9">
-            
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-primary text-white py-2">
-                    <h5 class="mb-0 text-center"><i class="bi bi-easel"></i> Carga Académica</h5>
+                    <div class="row align-items-center">
+                        <div class="col-2 text-start"><a href="{% url 'menu_consultas' %}" class="text-white text-decoration-none btn-home-nav p-1 d-inline-block" title="Menú"><i class="bi bi-house-door-fill fs-5"></i></a></div>
+                        <div class="col-8 text-center"><h5 class="mb-0 text-truncate"><i class="bi bi-easel me-1"></i> Carga Académica</h5></div>
+                        <div class="col-2"></div>
+                    </div>
                 </div>
-                
                 <div class="card-body p-3">
                     <form method="get" class="row g-2 align-items-end mb-3">
                         <div class="col-sm-9">
-                            <label class="form-label small fw-bold text-secondary mb-1">Selecciona un profesor:</label>
+                            <label class="form-label small fw-bold text-secondary mb-1">Profesor:</label>
                             <select name="instructor_id" class="form-select form-select-sm" required>
                                 <option value="">-- Elige un instructor --</option>
-                                {% for p in profesores %}
-                                    <option value="{{ p.ID }}" {% if instructor_id == p.ID %}selected{% endif %}>
-                                        {{ p.name }} ({{ p.dept_name.dept_name }})
-                                    </option>
-                                {% endfor %}
+                                {% for p in profesores %}<option value="{{ p.ID }}" {% if instructor_id == p.ID %}selected{% endif %}>{{ p.name }} ({{ p.dept_name.dept_name }})</option>{% endfor %}
                             </select>
                         </div>
-                        <div class="col-sm-3">
-                            <button type="submit" class="btn btn-primary btn-sm w-100">Ver Cursos</button>
-                        </div>
+                        <div class="col-sm-3"><button type="submit" class="btn btn-primary btn-sm w-100">Ver Cursos</button></div>
                     </form>
-
-                    {% if instructor_id and not profesor %}
-                        <div class="alert alert-danger py-2 small">Profesor no encontrado.</div>
-                    {% endif %}
-
+                    {% if instructor_id and not profesor %}<div class="alert alert-danger py-2 small">Profesor no encontrado.</div>{% endif %}
                     {% if resultado %}
-                        <div class="alert alert-success py-1 small mb-2">
-                            <strong>Profesor:</strong> {{ profesor.name }}
-                        </div>
-
-                        <div class="table-responsive">
-                            <table class="table table-sm table-striped table-hover border small mb-0 align-middle">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>ID Curso</th>
-                                        <th>Título</th>
-                                        <th>Sec</th>
-                                        <th>Semestre</th>
-                                        <th>Año</th>
-                                        <th>Salón</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for r in resultado %}
-                                    <tr>
-                                        <td class="fw-bold">{{ r.section.course.course_id }}</td>
-                                        <td>{{ r.section.course.title }}</td>
-                                        <td>{{ r.section.sec_id }}</td>
-                                        <td>{{ r.section.semester }}</td>
-                                        <td>{{ r.section.year }}</td>
-                                        <td>
-                                            {% if r.section.classroom %}
-                                                <span class="badge bg-secondary text-white">
-                                                    {{ r.section.classroom.building }} {{ r.section.classroom.room_number }}
-                                                </span>
-                                            {% else %}
-                                                <span class="text-muted fst-italic">Virtual / Sin aula</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% elif instructor_id and profesor %}
-                        <div class="alert alert-info py-2 small text-center mb-0">
-                            Este profesor no tiene cursos asignados.
+                        <div class="alert alert-success py-1 small mb-2"><strong>Profesor:</strong> {{ profesor.name }}</div>
+                        <div class="table-responsive"><table class="table table-sm table-striped table-hover border small mb-0 align-middle"><thead class="table-dark"><tr><th>ID</th><th>Título</th><th>Sec</th><th>Sem</th><th>Año</th><th>Salón</th></tr></thead><tbody>{% for r in resultado %}<tr><td class="fw-bold text-primary">{{ r.section.course.course_id }}</td><td>{{ r.section.course.title }}</td><td>{{ r.section.sec_id }}</td><td>{{ r.section.semester }}</td><td>{{ r.section.year }}</td><td>{% if r.section.classroom %}<span class="badge bg-secondary text-white">{{ r.section.classroom.building }} {{ r.section.classroom.room_number }}</span>{% else %}<span class="text-muted fst-italic">Virtual</span>{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+                    {% elif instructor_id and profesor %}<div class="alert alert-info py-2 small text-center mb-0">Sin cursos asignados.</div>{% endif %}
+                    
+                    {% if sql_query %}
+                        <div class="mt-4 pt-3 border-top">
+                            <h6 class="text-muted small text-uppercase fw-bold mb-2"><i class="bi bi-code-square me-1"></i> Consulta en SQL:</h6>
+                            <div class="p-3 bg-light rounded border shadow-sm">
+                                <code class="text-dark small" style="white-space: pre-wrap; font-family: 'Consolas', monospace;">{{ sql_query }}</code>
+                            </div>
                         </div>
                     {% endif %}
-                </div>
-                
-                <div class="card-footer bg-white text-center py-2 border-0">
-                    <a href="{% url 'menu_consultas' %}" class="text-decoration-none small text-secondary">Volver al Menú</a>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

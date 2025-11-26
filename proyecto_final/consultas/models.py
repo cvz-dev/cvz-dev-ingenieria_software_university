@@ -1,9 +1,6 @@
 from django.db import models
 
-
-# -------------------------------------------------
 # DEPARTMENT
-# -------------------------------------------------
 class Department(models.Model):
     dept_name = models.CharField(max_length=20, primary_key=True)
     building = models.CharField(max_length=15, null=True, blank=True)
@@ -16,9 +13,7 @@ class Department(models.Model):
         return self.dept_name
 
 
-# -------------------------------------------------
 # COURSE
-# -------------------------------------------------
 class Course(models.Model):
     course_id = models.CharField(max_length=8, primary_key=True)
     title = models.CharField(max_length=50)
@@ -39,9 +34,7 @@ class Course(models.Model):
         return f"{self.course_id} - {self.title}"
 
 
-# -------------------------------------------------
 # INSTRUCTOR
-# -------------------------------------------------
 class Instructor(models.Model):
     ID = models.CharField(max_length=5, primary_key=True)
     name = models.CharField(max_length=20)
@@ -62,9 +55,7 @@ class Instructor(models.Model):
         return self.name
 
 
-# -------------------------------------------------
 # STUDENT
-# -------------------------------------------------
 class Student(models.Model):
     ID = models.CharField(max_length=5, primary_key=True)
     name = models.CharField(max_length=20)
@@ -85,9 +76,7 @@ class Student(models.Model):
         return self.name
 
 
-# -------------------------------------------------
 # CLASSROOM
-# -------------------------------------------------
 class Classroom(models.Model):
     id = models.AutoField(primary_key=True)
     building = models.CharField(max_length=15)
@@ -102,9 +91,7 @@ class Classroom(models.Model):
         return f"{self.building} {self.room_number}"
 
 
-# -------------------------------------------------
 # TIME SLOT
-# -------------------------------------------------
 class TimeSlot(models.Model):
     id = models.AutoField(primary_key=True)
     time_slot_id = models.CharField(max_length=4)
@@ -122,9 +109,7 @@ class TimeSlot(models.Model):
         return f"{self.time_slot_id} ({self.day})"
 
 
-# -------------------------------------------------
 # SECTION
-# -------------------------------------------------
 class Section(models.Model):
     id = models.AutoField(primary_key=True)
     sec_id = models.CharField(max_length=8)
@@ -155,9 +140,7 @@ class Section(models.Model):
         return f"{self.course_id} Sec {self.sec_id} ({self.semester} {self.year})"
 
 
-# -------------------------------------------------
 # TEACHES
-# -------------------------------------------------
 class Teaches(models.Model):
     id = models.AutoField(primary_key=True)
     instructor = models.ForeignKey(
@@ -180,9 +163,7 @@ class Teaches(models.Model):
         return f"{self.instructor} teaches {self.section}"
 
 
-# -------------------------------------------------
 # TAKES
-# -------------------------------------------------
 class Takes(models.Model):
     id = models.AutoField(primary_key=True)
     grade = models.CharField(max_length=2, null=True, blank=True)
@@ -206,9 +187,7 @@ class Takes(models.Model):
         return f"{self.student} - {self.section}"
 
 
-# -------------------------------------------------
 # ADVISOR
-# -------------------------------------------------
 class Advisor(models.Model):
     id = models.AutoField(primary_key=True)
     student = models.OneToOneField(
@@ -233,9 +212,7 @@ class Advisor(models.Model):
         return f"{self.student} advised by {self.instructor}"
 
 
-# -------------------------------------------------
 # PREREQ
-# -------------------------------------------------
 class Prereq(models.Model):
     id = models.AutoField(primary_key=True)
     course = models.ForeignKey(

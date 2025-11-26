@@ -5,40 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Menú de Consultas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root { --mi-naranja: #fd7e14; --mi-naranja-dark: #d66305; }
+        .bg-primary { background-color: var(--mi-naranja) !important; }
+        .text-primary { color: var(--mi-naranja) !important; }
+        .btn-primary { background-color: var(--mi-naranja) !important; border-color: var(--mi-naranja) !important; }
+        .btn-primary:hover, .btn-primary:focus, .btn-primary:active { background-color: var(--mi-naranja-dark) !important; border-color: var(--mi-naranja-dark) !important; }
+        .badge.bg-primary { background-color: var(--mi-naranja) !important; }
+    </style>
 </head>
 <body class="bg-light">
 
-    <div class="container py-5">
+    <div class="container py-4">
         <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
+            <div class="col-md-6 col-lg-5">
                 
                 <div class="card shadow-sm border-0">
-                    <div class="card-header bg-primary text-white text-center py-3">
-                        <h2 class="h4 mb-0">Menú de Consultas</h2>
+                    <div class="card-header bg-primary text-white text-center py-2">
+                        <h5 class="mb-0">Menú de Consultas</h5>
                     </div>
                     
-                    <div class="list-group list-group-flush p-3">
-                        <a href="{% url 'consulta1' %}" class="list-group-item list-group-item-action rounded mb-2 border">
-                            <i class="bi bi-arrow-right-circle"></i> 1. Prerrequisitos de un Curso
+                    <div class="list-group list-group-flush small">
+                        <a href="{% url 'consulta1' %}" class="list-group-item list-group-item-action py-2">
+                            <i class="bi bi-arrow-right-circle me-2 text-primary"></i> 1. Prerrequisitos de un Curso
                         </a>
 
-                        <a href="{% url 'consulta2' %}" class="list-group-item list-group-item-action rounded mb-2 border">
-                            <i class="bi bi-person-lines-fill"></i> 2. Transcript de un Estudiante
-                        </a>
-                        
-                        <a href="{% url 'consulta3' %}" class="list-group-item list-group-item-action rounded mb-2 border">
-                            <i class="bi bi-person-lines-fill"></i> 3. Estudiante y asesor
+                        <a href="{% url 'consulta2' %}" class="list-group-item list-group-item-action py-2">
+                            <i class="bi bi-person-lines-fill me-2 text-primary"></i> 2. Transcript de un Estudiante
                         </a>
 
-                        <a href="{% url 'consulta4' %}" class="list-group-item list-group-item-action rounded mb-2 border">
-                            <i class="bi bi-journal-check"></i> 4. Estudiantes con nota 'A'
+                        <a href="{% url 'consulta3' %}" class="list-group-item list-group-item-action py-2">
+                            <i class="bi bi-people-fill me-2 text-primary"></i> 3. Asesor de un Estudiante
                         </a>
 
-                         <a href="{% url 'consulta5' %}" class="list-group-item list-group-item-action rounded mb-2 border">
-                            <i class="bi bi-person-video3"></i> 5. Cursos de un Profesor
+                        <a href="{% url 'consulta4' %}" class="list-group-item list-group-item-action py-2">
+                            <i class="bi bi-journal-check me-2 text-primary"></i> 4. Estudiantes con nota 'A'
+                        </a>
+
+                        <a href="{% url 'consulta5' %}" class="list-group-item list-group-item-action py-2">
+                            <i class="bi bi-person-video3 me-2 text-primary"></i> 5. Cursos de un Profesor
                         </a>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
